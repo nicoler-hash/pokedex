@@ -1,48 +1,66 @@
 const POKEAPI_URL = "https://pokeapi.co/api/v2";
 const pokemonList = document.getElementById("pokemons");
 
+
 const loadPokemons = async () => {
     try {
-        const response = await fetch(`${POKEAPI_URL}/pokemon`).then(response => response.json());
-        response.results.forEach(pokemon => {
+        const res = await fetch(`${POKEAPI_URL}/pokemon?limit=151`); 
+        const data = await res.json();
+        
+        data.results.forEach(pokemon => {
             const option = document.createElement("option");
-            option.textContent = pokemon.name;
+            option.textContent = pokemon.name.toUpperCase();
             option.value = pokemon.url;
             pokemonList.appendChild(option);
         });
     } catch (error) {
         console.error("Error fetching pokemons:", error);
     }
-}
+};
 
 loadPokemons();
 
+
+pokemonList.addEventListener("change", (e) => {
+    if(e.target.value) {
+        pokemonSelected(e.target.value);
+    }
+});
+
+
 const pokemonSelected = async (pokemonUrl) => {
     try {
+        const res = await fetch(pokemonUrl);
+        const pokemon = await res.json();
 
-        const response = await fetch(pokemonUrl).then(response => response.json());
-
+    
         const pokemonImage = document.getElementById("pokemon-image");
         const pokemonName = document.getElementById("pokemon-name");
         const pokemonStats = document.getElementById("pokemon-stats");
+        const pokemonAbility = document.getElementById("pokemon-ability"); 
 
-        pokemonImage.src = response.sprites.front_default;
-        pokemonName.textContent = response.name;
+        
+        pokemonImage.src = pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default;
+        pokemonImage.alt = pokemon.name;
+        pokemonName.textContent = pokemon.name.toUpperCase();
+        
+        
+        if (pokemon.abilities && pokemon.abilities.length > 0) {
+            const mainAbility = pokemon.abilities[0].ability.name;
+            pokemonAbility.textContent = `Habilidad Especial: ${mainAbility.toUpperCase()}`;
+        } else {
+            pokemonAbility.textContent = "Habilidad: Ninguna";
+        }
 
+        
         pokemonStats.innerHTML = "";
-
-        response.stats.forEach(stat => {
+        pokemon.stats.forEach(stat => {
             const li = document.createElement("li");
-            li.textContent = `${stat.stat.name}: ${stat.base_stat}`;
+            li.innerHTML = `<strong>${stat.stat.name.toUpperCase()}:</strong> ${stat.base_stat}`;
             pokemonStats.appendChild(li);
+        });
 
-        })
     } catch (error) {
         console.error("Error fetching pokemon details:", error);
     }
-}
-// fetch(`${POKEAPI_URL}/pokemon`)
-// .then(response => response.json())
-// .then(data => {
-//     console.log(data);
-// });
+};
