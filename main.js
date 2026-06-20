@@ -22,6 +22,8 @@ loadPokemons();
 pokemonList.addEventListener("change", (e) => {
   if (e.target.value) {
     pokemonSelected(e.target.value);
+  } else {
+    limpiarTarjeta();
   }
 });
 
@@ -34,16 +36,24 @@ const pokemonSelected = async (pokemonUrl) => {
     const pokemonName = document.getElementById("pokemon-name");
     const pokemonStats = document.getElementById("pokemon-stats");
     const pokemonAbility = document.getElementById("pokemon-ability");
+    const pokemonTypes = document.getElementById("pokemon-types");
 
     pokemonImage.src =
       pokemon.sprites.other["official-artwork"].front_default ||
       pokemon.sprites.front_default;
     pokemonImage.alt = pokemon.name;
+
+    const tipos = pokemon.types
+      .map((t) => t.type.name.toUpperCase())
+      .join(" / ");
+    pokemonImage.setAttribute("data-types", tipos);
+
+    pokemonTypes.textContent = tipos;
+
     pokemonName.textContent = pokemon.name.toUpperCase();
 
     if (pokemon.abilities && pokemon.abilities.length > 0) {
-      const mainAbility = pokemon.abilities[0].ability.name;
-      pokemonAbility.textContent = `Habilidad Especial: ${mainAbility.toUpperCase()}`;
+      pokemonAbility.textContent = `Habilidad Especial: ${pokemon.abilities[0].ability.name.toUpperCase()}`;
     } else {
       pokemonAbility.textContent = "Habilidad: Ninguna";
     }
@@ -59,4 +69,25 @@ const pokemonSelected = async (pokemonUrl) => {
   } catch (error) {
     console.error("Error fetching pokemon details:", error);
   }
+};
+
+const limpiarTarjeta = () => {
+  const pokemonImage = document.getElementById("pokemon-image");
+  const pokemonName = document.getElementById("pokemon-name");
+  const pokemonStats = document.getElementById("pokemon-stats");
+  const pokemonAbility = document.getElementById("pokemon-ability");
+  const pokemonTypesWrap = document.getElementById("pokemon-types-wrap");
+  const pokemonTypes = document.getElementById("pokemon-types");
+
+  pokemonImage.src = "";
+  pokemonImage.alt = "";
+  pokemonImage.title = "";
+  pokemonName.textContent = "---";
+  pokemonAbility.textContent = "Selecciona un Pokémon";
+  pokemonStats.innerHTML = "";
+
+  if (pokemonTypesWrap) pokemonTypesWrap.style.display = "none";
+  if (pokemonTypes) pokemonTypes.textContent = "";
+
+  pokemonImage.removeAttribute("data-types");
 };

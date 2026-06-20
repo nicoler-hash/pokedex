@@ -131,3 +131,38 @@ select:focus {
 #pokemon-stats strong {
   color: #f6f8f8;
 }
+
+.pokemon-image-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+
+#pokemon-image-and-types {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+#pokemon-types-wrap {
+  display: none; 
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #ffffff;
+  font-weight: 800;
+  white-space: pre-wrap;
+}
+
+
+.pokemon-image-wrap:hover #pokemon-types-wrap,
+#pokemon-image-wrap:hover + #pokemon-types-wrap {
+  display: block;
+}
+
+
+.pokemon-image-wrap:hover #pokemon-image {
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5)) brightness(0.9);
+}
